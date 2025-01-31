@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "WxaldNx2B38=",
+  "success": true,
+  "projectFilePath": "D:\\Novestra full stack Upskilling Program - ToDo App\\Backend\\Backend.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\gihan\\.nuget\\packages\\microsoft.aspnetcore.openapi\\9.0.0\\microsoft.aspnetcore.openapi.9.0.0.nupkg.sha512",
+    "C:\\Users\\gihan\\.nuget\\packages\\microsoft.openapi\\1.6.17\\microsoft.openapi.1.6.17.nupkg.sha512"
+  ],
+  "logs": []
+}
