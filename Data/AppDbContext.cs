@@ -9,7 +9,7 @@ namespace Backend.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-        public DbSet<ToDoItem> TodoItems { get; set; }
+        public DbSet<ToDoItem> ToDoItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

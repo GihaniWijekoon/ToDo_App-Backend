@@ -7,7 +7,6 @@ using System.Security.Claims;
 
 namespace Backend.Controllers
 {
-
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
@@ -22,7 +21,6 @@ namespace Backend.Controllers
             _logger = logger;
         }
 
-        // GET: api/todo
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ToDoItemDto>>> GetTodos()
         {
@@ -32,7 +30,7 @@ namespace Backend.Controllers
                 return Unauthorized();
             }
 
-            var todos = await _context.TodoItems
+            var todos = await _context.ToDoItems  // Renamed to ToDoItems
                 .Where(t => t.UserId == userId)
                 .Select(t => new ToDoItemDto
                 {
@@ -48,13 +46,11 @@ namespace Backend.Controllers
             return Ok(todos);
         }
 
-
-        // GET: api/todo/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ToDoItemDto>> GetTodo(int id)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var todo = await _context.TodoItems
+            var todo = await _context.ToDoItems  // Renamed to ToDoItems
                 .FirstOrDefaultAsync(t => t.Id == id && t.UserId == userId);
 
             if (todo == null)
@@ -73,8 +69,6 @@ namespace Backend.Controllers
             });
         }
 
-
-        // POST: api/todo
         [HttpPost]
         public async Task<ActionResult<ToDoItemDto>> CreateTodo(ToDoItem todo)
         {
@@ -87,10 +81,9 @@ namespace Backend.Controllers
             todo.UserId = userId;
             todo.CreatedAt = DateTime.UtcNow;
 
-            _context.TodoItems.Add(todo);
+            _context.ToDoItems.Add(todo);  // Renamed to ToDoItems
             await _context.SaveChangesAsync();
 
-            // ✅ Convert ToDoItem to ToDoItemDto
             var todoDto = new ToDoItemDto
             {
                 Id = todo.Id,
@@ -104,70 +97,46 @@ namespace Backend.Controllers
             return CreatedAtAction(nameof(GetTodo), new { id = todo.Id }, todoDto);
         }
 
-
-        // PUT: api/todo/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateTodo(int id, ToDoItem todo)
+        public async Task<IActionResult> UpdateToDoItem(int id, [FromBody] ToDoItem updatedItem)
         {
-            if (id != todo.Id)
+            if (updatedItem == null || id <= 0)
             {
-                return BadRequest();
+                return BadRequest("Invalid request.");
             }
 
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var existingTodo = await _context.TodoItems
-                .FirstOrDefaultAsync(t => t.Id == id && t.UserId == userId);
-
-            if (existingTodo == null)
+            var existingItem = await _context.ToDoItems.FindAsync(id);  // Renamed to ToDoItems
+            if (existingItem == null)
             {
-                return NotFound();
+                return NotFound("ToDo item not found.");
             }
 
-            // Only update fields if they are not null
-            if (!string.IsNullOrEmpty(todo.Title))
+            if (!string.IsNullOrEmpty(updatedItem.Title))
             {
-                existingTodo.Title = todo.Title;
+                existingItem.Title = updatedItem.Title;
+            }
+            if (!string.IsNullOrEmpty(updatedItem.Description))
+            {
+                existingItem.Description = updatedItem.Description;
+            }
+            if (updatedItem.CompletedAt.HasValue)
+            {
+                existingItem.CompletedAt = updatedItem.CompletedAt;
             }
 
-            if (!string.IsNullOrEmpty(todo.Description))
-            {
-                existingTodo.Description = todo.Description;
-            }
+            existingItem.IsCompleted = updatedItem.IsCompleted;
+            existingItem.UserId = updatedItem.UserId ?? existingItem.UserId;
 
-            // Update IsCompleted only if it's provided
-            if (todo.IsCompleted != existingTodo.IsCompleted)
-            {
-                existingTodo.IsCompleted = todo.IsCompleted;
-                if (todo.IsCompleted && !existingTodo.CompletedAt.HasValue)
-                {
-                    existingTodo.CompletedAt = DateTime.UtcNow;
-                }
-            }
+            await _context.SaveChangesAsync();
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TodoExists(id))
-                {
-                    return NotFound();
-                }
-                throw;
-            }
-
-            return NoContent();
+            return Ok(existingItem);
         }
 
-
-
-        // DELETE: api/todo/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTodo(int id)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var todo = await _context.TodoItems
+            var todo = await _context.ToDoItems  // Renamed to ToDoItems
                 .FirstOrDefaultAsync(t => t.Id == id && t.UserId == userId);
 
             if (todo == null)
@@ -175,16 +144,10 @@ namespace Backend.Controllers
                 return NotFound();
             }
 
-            _context.TodoItems.Remove(todo);
+            _context.ToDoItems.Remove(todo);  // Renamed to ToDoItems
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }
-
-        private bool TodoExists(int id)
-        {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            return _context.TodoItems.Any(t => t.Id == id && t.UserId == userId);
         }
     }
 }
