@@ -70,17 +70,10 @@ namespace Backend.Services
         {
             var claims = new[]
             {
-                new Claim(ClaimTypes.NameIdentifier, user.UserName ?? string.Empty),
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Name, user.UserName ?? string.Empty)
             };
 
-            // var secretKey = _configuration["Jwt:Key"] ?? Environment.GetEnvironmentVariable("JWT_SECRET");
-
-            // if (string.IsNullOrEmpty(secretKey))
-            // {
-            //     throw new Exception("JWT Secret Key is missing. Please check your configuration.");
-            // }
-            
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? string.Empty));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
