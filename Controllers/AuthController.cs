@@ -21,7 +21,6 @@ namespace Backend.Controllers
             _logger = logger;
         }
 
-        // POST: api/auth/register
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
@@ -42,7 +41,6 @@ namespace Backend.Controllers
             }
         }
 
-        // POST: api/auth/login
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {

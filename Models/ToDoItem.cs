@@ -1,4 +1,3 @@
-// Models/ToDoItem.cs
 namespace Backend.Models
 {
     public class ToDoItem

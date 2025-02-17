@@ -1,4 +1,3 @@
-// Services/IUserService.cs
 using Backend.Models;
 
 namespace Backend.Services

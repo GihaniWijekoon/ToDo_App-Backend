@@ -19,7 +19,7 @@ namespace Backend.Data
                 .HasKey(t => t.Id);
 
             modelBuilder.Entity<ToDoItem>()
-                .HasOne<User>() // Remove direct reference to 'User' property
+                .HasOne<User>() 
                 .WithMany(u => u.ToDoItems)
                 .HasForeignKey(t => t.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
